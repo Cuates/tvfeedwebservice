@@ -1,7 +1,7 @@
 ##
 #        File: tvfeedclass.py
 #     Created: 11/10/2020
-#     Updated: 11/14/2020
+#     Updated: 11/15/2020
 #  Programmer: Cuates
 #  Updated By: Cuates
 #     Purpose: TV feed web service
@@ -56,12 +56,12 @@ class TVFeedClass(Resource):
             # Check if status is success
             if payloadResponse['Status'] == 'Success':
               # Initialize list
-              possibleParams = ['titlelong', 'titleshort', 'actionnumber', 'limit', 'sort']
+              possibleParams = ['titlelong', 'titleshort', 'actionstatus', 'limit', 'sort']
 
               # Extract tv feed
               #resultDict = tfwsclass._extractTVFeed('MariaDBSQLTV', 'extracting', 'extractmediafeed', 'extractTVFeed', possibleParams, payloadResponse['Result'])
               #resultDict = tfwsclass._extractTVFeed('PGSQLTV', 'extracting', 'extractmediafeed', 'extractTVFeed', possibleParams, payloadResponse['Result'])
-              #resultDict = tfwsclass._extractTVFeed('MSSQLLTV', 'extracting', 'dbo.extractMediaFeed', 'extractTVFeed', possibleParams, payloadResponse['Result'])
+              resultDict = tfwsclass._extractTVFeed('MSSQLLTV', 'extracting', 'dbo.extractMediaFeed', 'extractTVFeed', possibleParams, payloadResponse['Result'])
               resultDict = tfwsclass._extractTVFeed('MSSQLWTV', 'extracting', 'dbo.extractMediaFeed', 'extractTVFeed', possibleParams, payloadResponse['Result'])
 
               # Check if there is data
@@ -160,7 +160,7 @@ class TVFeedClass(Resource):
               # Insert tv feed
               #resultDict = tfwsclass._insertupdatedeleteTVFeed('MariaDBSQLTV', 'inserting', 'insertupdatedeletemediafeed', 'insertTVFeed', possibleParams, payloadResponse['Result'])
               #resultDict = tfwsclass._insertupdatedeleteTVFeed('PGSQLTV', 'inserting', 'insertupdatedeletemediafeed', 'insertTVFeed', possibleParams, payloadResponse['Result'])
-              #resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLLTV', 'inserting', 'dbo.insertupdatedeleteMediaFeed', 'insertTVFeed', possibleParams, payloadResponse['Result'])
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLLTV', 'inserting', 'dbo.insertupdatedeleteMediaFeed', 'insertTVFeed', possibleParams, payloadResponse['Result'])
               resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLWTV', 'inserting', 'dbo.insertupdatedeleteMediaFeed', 'insertTVFeed', possibleParams, payloadResponse['Result'])
 
               # Loop through sub elements
@@ -248,7 +248,7 @@ class TVFeedClass(Resource):
               # Update tv feed
               #resultDict = tfwsclass._insertupdatedeleteTVFeed('MariaDBSQLTV', 'updating', 'insertupdatedeletemediafeed', 'updateTVFeed', possibleParams, payloadResponse['Result'])
               #resultDict = tfwsclass._insertupdatedeleteTVFeed('PGSQLTV', 'updating', 'insertupdatedeletemediafeed', 'updateTVFeed', possibleParams, payloadResponse['Result'])
-              #resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLLTV', 'updating', 'dbo.insertupdatedeleteMediaFeed', 'updateTVFeed', possibleParams, payloadResponse['Result'])
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLLTV', 'updating', 'dbo.insertupdatedeleteMediaFeed', 'updateTVFeed', possibleParams, payloadResponse['Result'])
               resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLWTV', 'updating', 'dbo.insertupdatedeleteMediaFeed', 'updateTVFeed', possibleParams, payloadResponse['Result'])
 
               # Loop through sub elements
@@ -336,7 +336,7 @@ class TVFeedClass(Resource):
               # Delete tv feed
               #resultDict = tfwsclass._insertupdatedeleteTVFeed('MariaDBSQLTV', 'deleting', 'insertupdatedeletemediafeed', 'deleteTVFeed', possibleParams, payloadResponse['Result'])
               #resultDict = tfwsclass._insertupdatedeleteTVFeed('PGSQLTV', 'deleting', 'insertupdatedeletemediafeed', 'deleteTVFeed', possibleParams, payloadResponse['Result'])
-              #resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLLTV', 'deleting', 'insertupdatedeletemediafeed', 'deleteTVFeed', possibleParams, payloadResponse['Result'])
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLLTV', 'deleting', 'insertupdatedeletemediafeed', 'deleteTVFeed', possibleParams, payloadResponse['Result'])
               resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLWTV', 'deleting', 'dbo.insertupdatedeleteMediaFeed', 'deleteTVFeed', possibleParams, payloadResponse['Result'])
 
               # Loop through sub elements
