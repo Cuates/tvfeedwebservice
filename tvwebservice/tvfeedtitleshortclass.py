@@ -1,7 +1,7 @@
 ##
 #        File: tvfeedtitleshortclass.py
 #     Created: 11/10/2020
-#     Updated: 11/15/2020
+#     Updated: 11/17/2020
 #  Programmer: Cuates
 #  Updated By: Cuates
 #     Purpose: TV feed title short web service
@@ -55,32 +55,45 @@ class TVFeedTitleShortClass(Resource):
           if payloadResponse.get('Status') != None:
             # Check if status is success
             if payloadResponse['Status'] == 'Success':
+              # Set variable
+              statusVal = 'Success'
+              messageVal = 'Processed request'
+              selectColumn = 'select titlelongreturn as "Title Long", titleshortreturn as "Title Short", publishdatereturn as "Publish Date", actionstatusreturn as "Action Status"'
+
               # Initialize list
               possibleParams = ['titlelong', 'titleshort', 'actionstatus', 'limit', 'sort']
 
               # Extract tv feed
-              #resultDict = tfwsclass._extractTVFeed('MariaDBSQLTV', 'extracting', 'dbo.extractMediaFeed', 'extractTVFeed', possibleParams, payloadResponse['Result'])
-              #resultDict = tfwsclass._extractTVFeed('PGSQLTV', 'extracting', 'dbo.extractMediaFeed', 'extractTVFeed', possibleParams, payloadResponse['Result'])
-              resultDict = tfwsclass._extractTVFeed('MSSQLLTV', 'extracting', 'dbo.extractMediaFeed', 'extractTVFeed', possibleParams, payloadResponse['Result'])
-              resultDict = tfwsclass._extractTVFeed('MSSQLWTV', 'extracting', 'dbo.extractMediaFeed', 'extractTVFeed', possibleParams, payloadResponse['Result'])
+              resultDict = tfwsclass._extractTVFeed('MariaDBSQLTV', 'extracting', '', 'extractmediafeed', 'extractTVFeed', possibleParams, payloadResponse['Result'])
+              resultDict = tfwsclass._extractTVFeed('PGSQLTV', 'extracting', selectColumn, 'extractmediafeed', 'extractTVFeed', possibleParams, payloadResponse['Result'])
+              resultDict = tfwsclass._extractTVFeed('MSSQLLTV', 'extracting', '', 'dbo.extractMediaFeed', 'extractTVFeed', possibleParams, payloadResponse['Result'])
+              resultDict = tfwsclass._extractTVFeed('MSSQLWTV', 'extracting', '', 'dbo.extractMediaFeed', 'extractTVFeed', possibleParams, payloadResponse['Result'])
 
               # Check if there is data
               if resultDict:
                 # Loop through sub elements
                 for systemEntries in resultDict:
                   # Check if elements exists
-                  if systemEntries.get('SError') == None:
-                      # Store Message
-                      returnDict = {'Status': 'Success', 'Message': 'Processed request', 'Count': len(resultDict), 'Result': resultDict}
-                  else:
-                    # Store Message
-                    returnDict = {'Status': systemEntries['SError'], 'Message': systemEntries['SMessage'], 'Count': 0, 'Result': []}
+                  if systemEntries.get('SError') != None:
+                    # Store status value
+                    statusVal = systemEntries['SError']
+
+                    # Store message value
+                    messageVal = systemEntries['SMessage']
 
                     # Set code
                     codeVal = 500
 
                     # Break out of loop
                     break
+
+                # Check if status value is success
+                if statusVal == 'Success':
+                  # Store Message
+                  returnDict = {'Status': statusVal, 'Message': messageVal, 'Count': len(resultDict), 'Result': resultDict}
+                else:
+                  # Store Message
+                  returnDict = {'Status': statusVal, 'Message': messageVal, 'Count': 0, 'Result': []}
               else:
                 # Store Message
                 returnDict = {'Status': 'Success', 'Message': 'Processed request', 'Count': 0, 'Result': []}
@@ -154,27 +167,42 @@ class TVFeedTitleShortClass(Resource):
           if payloadResponse.get('Status') != None:
             # Check if status is success
             if payloadResponse['Status'] == 'Success':
+              # Set variable
+              statusVal = 'Success'
+              messageVal = 'Processed request'
+
               # Initailize list
-              possibleParams = ['titlelong', 'titleshort', 'publishdate', 'actionstatus']
+              possibleParams = ['titlelong', 'titleshort', 'titleshortold', 'publishdate', 'actionstatus']
+              removeParams = ['titleshortold']
 
               # Insert tv feed
-              #resultDict = tfwsclass._insertupdatedeleteTVFeed('MariaDBSQLTV', 'inserting', 'insertupdatedeletemediafeed', 'insertTVFeed', possibleParams, payloadResponse['Result'])
-              #resultDict = tfwsclass._insertupdatedeleteTVFeed('PGSQLTV', 'inserting', 'insertupdatedeletemediafeed', 'insertTVFeed', possibleParams, payloadResponse['Result'])
-              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLLTV', 'inserting', 'dbo.insertupdatedeleteMediaFeed', 'insertTVFeed', possibleParams, payloadResponse['Result'])
-              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLWTV', 'inserting', 'dbo.insertupdatedeleteMediaFeed', 'insertTVFeed', possibleParams, payloadResponse['Result'])
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('MariaDBSQLTV', 'inserting', 'insertupdatedeletemediafeed', 'insertTVFeed', possibleParams, payloadResponse['Result'], removeParams)
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('PGSQLTV', 'inserting', 'insertupdatedeletemediafeed', 'insertTVFeed', possibleParams, payloadResponse['Result'], removeParams)
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLLTV', 'inserting', 'dbo.insertupdatedeleteMediaFeed', 'insertTVFeed', possibleParams, payloadResponse['Result'], removeParams)
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLWTV', 'inserting', 'dbo.insertupdatedeleteMediaFeed', 'insertTVFeed', possibleParams, payloadResponse['Result'], removeParams)
 
               # Loop through sub elements
               for systemEntries in resultDict:
                 # Check if elements exists
-                if systemEntries.get('SError') == None:
-                  # Store Message
-                  returnDict = {'Status': 'Success', 'Message': 'Processed request', 'Count': len(resultDict), 'Result': resultDict}
-                else:
-                  # Store Message
-                  returnDict = {'Status': systemEntries['SError'], 'Message': systemEntries['SMessage'], 'Count': 0, 'Result': []}
+                if systemEntries.get('SError') != None:
+                  # Store status value
+                  statusVal = systemEntries['SError']
 
-                  # Break out of loop
+                  # Store message value
+                  messageVal = systemEntries['SMessage']
+
+                  # Set code
+                  codeVal = 500
+
+                  # Break out of the loop
                   break
+
+              if statusVal == 'Success':
+                # Store Message
+                returnDict = {'Status': statusVal, 'Message': messageVal, 'Count': len(resultDict), 'Result': resultDict}
+              else:
+                # Store Message
+                returnDict = {'Status': statusVal, 'Message': messageVal, 'Count': 0, 'Result': []}
             else:
               # Store Message
               returnDict = {'Status': payloadResponse['Status'], 'Message': payloadResponse['Message'], 'Count': 0, 'Result': []}
@@ -242,27 +270,42 @@ class TVFeedTitleShortClass(Resource):
           if payloadResponse.get('Status') != None:
             # Check if status is success
             if payloadResponse['Status'] == 'Success':
+              # Set variable
+              statusVal = 'Success'
+              messageVal = 'Processed request'
+
               # Initailize list
-              possibleParams = ['titleshort', 'titleshortold']
+              possibleParams = ['titlelong', 'titleshort', 'titleshortold', 'publishdate', 'actionstatus']
+              removeParams = ['titlelong', 'publishdate', 'actionstatus']
 
               # Update tv feed
-              #resultDict = tfwsclass._insertupdatedeleteTVFeed('MariaDBSQLTV', 'updating', 'insertupdatedeletemediafeed', 'updateTVFeedTitleShort', possibleParams, payloadResponse['Result'])
-              #resultDict = tfwsclass._insertupdatedeleteTVFeed('PGSQLTV', 'updating', 'insertupdatedeletemediafeed', 'updateTVFeedTitleShort', possibleParams, payloadResponse['Result'])
-              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLLTV', 'updating', 'dbo.insertupdatedeleteMediaFeed', 'updateTVFeedTitleShort', possibleParams, payloadResponse['Result'])
-              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLWTV', 'updating', 'dbo.insertupdatedeleteMediaFeed', 'updateTVFeedTitleShort', possibleParams, payloadResponse['Result'])
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('MariaDBSQLTV', 'updating', 'insertupdatedeletemediafeed', 'updateTVFeedTitleShort', possibleParams, payloadResponse['Result'], removeParams)
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('PGSQLTV', 'updating', 'insertupdatedeletemediafeed', 'updateTVFeedTitleShort', possibleParams, payloadResponse['Result'], removeParams)
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLLTV', 'updating', 'dbo.insertupdatedeleteMediaFeed', 'updateTVFeedTitleShort', possibleParams, payloadResponse['Result'], removeParams)
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLWTV', 'updating', 'dbo.insertupdatedeleteMediaFeed', 'updateTVFeedTitleShort', possibleParams, payloadResponse['Result'], removeParams)
 
               # Loop through sub elements
               for systemEntries in resultDict:
                 # Check if elements exists
-                if systemEntries.get('SError') == None:
-                  # Store Message
-                  returnDict = {'Status': 'Success', 'Message': 'Processed request', 'Count': len(resultDict), 'Result': resultDict}
-                else:
-                  # Store Message
-                  returnDict = {'Status': systemEntries['SError'], 'Message': systemEntries['SMessage'], 'Count': 0, 'Result': []}
+                if systemEntries.get('SError') != None:
+                  # Store status value
+                  statusVal = systemEntries['SError']
 
-                  # Break out of loop
+                  # Store message value
+                  messageVal = systemEntries['SMessage']
+
+                  # Set code
+                  codeVal = 500
+
+                  # Break out of the loop
                   break
+
+              if statusVal == 'Success':
+                # Store Message
+                returnDict = {'Status': statusVal, 'Message': messageVal, 'Count': len(resultDict), 'Result': resultDict}
+              else:
+                # Store Message
+                returnDict = {'Status': statusVal, 'Message': messageVal, 'Count': 0, 'Result': []}
             else:
               # Store Message
               returnDict = {'Status': payloadResponse['Status'], 'Message': payloadResponse['Message'], 'Count': 0, 'Result': []}
@@ -330,27 +373,42 @@ class TVFeedTitleShortClass(Resource):
           if payloadResponse.get('Status') != None:
             # Check if status is success
             if payloadResponse['Status'] == 'Success':
+              # Set variable
+              statusVal = 'Success'
+              messageVal = 'Processed request'
+
               # Initailize list
-              possibleParams = ['titleshort']
+              possibleParams = ['titlelong', 'titleshort', 'titleshortold', 'publishdate', 'actionstatus']
+              removeParams = ['titlelong', 'titleshortold', 'publishdate', 'actionstatus']
 
               # Delete tv feed
-              #resultDict = tfwsclass._insertupdatedeleteTVFeed('MariaDBSQLTV', 'deleting', 'insertupdatedeletemediafeed', 'deleteTVFeedTitleShort', possibleParams, payloadResponse['Result'])
-              #resultDict = tfwsclass._insertupdatedeleteTVFeed('PGSQLTV', 'deleting', 'insertupdatedeletemediafeed', 'deleteTVFeedTitleShort', possibleParams, payloadResponse['Result'])
-              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLLTV', 'deleting', 'dbo.insertupdatedeleteMediaFeed', 'deleteTVFeedTitleShort', possibleParams, payloadResponse['Result'])
-              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLWTV', 'deleting', 'dbo.insertupdatedeleteMediaFeed', 'deleteTVFeedTitleShort', possibleParams, payloadResponse['Result'])
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('MariaDBSQLTV', 'deleting', 'insertupdatedeletemediafeed', 'deleteTVFeedTitleShort', possibleParams, payloadResponse['Result'], removeParams)
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('PGSQLTV', 'deleting', 'insertupdatedeletemediafeed', 'deleteTVFeedTitleShort', possibleParams, payloadResponse['Result'], removeParams)
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLLTV', 'deleting', 'dbo.insertupdatedeleteMediaFeed', 'deleteTVFeedTitleShort', possibleParams, payloadResponse['Result'], removeParams)
+              resultDict = tfwsclass._insertupdatedeleteTVFeed('MSSQLWTV', 'deleting', 'dbo.insertupdatedeleteMediaFeed', 'deleteTVFeedTitleShort', possibleParams, payloadResponse['Result'], removeParams)
 
               # Loop through sub elements
               for systemEntries in resultDict:
                 # Check if elements exists
-                if systemEntries.get('SError') == None:
-                  # Store Message
-                  returnDict = {'Status': 'Success', 'Message': 'Processed request', 'Count': len(resultDict), 'Result': resultDict}
-                else:
-                  # Store Message
-                  returnDict = {'Status': systemEntries['SError'], 'Message': systemEntries['SMessage'], 'Count': 0, 'Result': []}
+                if systemEntries.get('SError') != None:
+                  # Store status value
+                  statusVal = systemEntries['SError']
 
-                  # Break out of loop
+                  # Store message value
+                  messageVal = systemEntries['SMessage']
+
+                  # Set code
+                  codeVal = 500
+
+                  # Break out of the loop
                   break
+
+              if statusVal == 'Success':
+                # Store Message
+                returnDict = {'Status': statusVal, 'Message': messageVal, 'Count': len(resultDict), 'Result': resultDict}
+              else:
+                # Store Message
+                returnDict = {'Status': statusVal, 'Message': messageVal, 'Count': 0, 'Result': []}
             else:
               # Store Message
               returnDict = {'Status': payloadResponse['Status'], 'Message': payloadResponse['Message'], 'Count': 0, 'Result': []}
